@@ -20,7 +20,7 @@ from api.views import PersonViewSet
 
 
 router = routers.DefaultRouter(trailing_slash=False)
-router.register("persons", PersonViewSet)
+router.register("people", PersonViewSet)
 
 urlpatterns = [
     url(r'^api/', include(router.urls)),

@@ -8,4 +8,4 @@ class Person(models.Model):
     address = models.TextField(max_length=None, blank=True)
 
     class JSONAPIMeta:
-        resource_name = "persons"
+        resource_name = "people"
