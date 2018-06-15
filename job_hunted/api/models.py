@@ -21,3 +21,13 @@ class Job(models.Model):
 
     class JSONAPIMeta:
         resource_name = "jobs"
+
+
+class Recruiter(models.Model):
+    first_name = models.CharField(max_length=120, blank=True)
+    last_name = models.CharField(max_length=120, blank=True)
+    address = models.TextField(max_length=None, blank=True)
+    person = models.ManyToManyField("api.Person", blank=True)
+
+    class JSONAPIMeta:
+        resource_name = "recruiters"
