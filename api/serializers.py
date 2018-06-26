@@ -9,12 +9,12 @@ class JobSerializer(serializers.ModelSerializer):
         fields = ('job_type', 'job_title', 'company_name', 'company_address',
                   'job_description')
 
+
 class PersonSerializer(serializers.ModelSerializer):
-    #   included_serializer = {"job": JobSerializer}
-   job = ResourceRelatedField(
+     job = ResourceRelatedField(
            queryset=Job.objects
            )
-   class Meta:
+     class Meta:
         model = Person
         fields = "__all__"
 
@@ -22,4 +22,6 @@ class PersonSerializer(serializers.ModelSerializer):
 class RecruiterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recruiter
-        fields = ('first_name', 'last_name', 'address',)
+        fields = ('first_name', 'last_name', 'address', 'person')
+
+    person = ResourceRelatedField(queryset=Person.objects, many=True)

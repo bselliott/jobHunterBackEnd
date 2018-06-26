@@ -25,7 +25,7 @@ SECRET_KEY = 'i75c=y*tza)mv)$5ln+a+)otgzg9517r-l-$6nn0)pu2wmw-os'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost.imtapps.com']
 
 
 # Application definition
@@ -76,6 +76,10 @@ TEMPLATES = [
 WSGI_APPLICATION = 'job_hunted.wsgi.application'
 
 CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
+CORS_ORIGIN_WHITLIST = (
+        'http://localhost.imtapps.com:4200'
+        )
 
 JSON_API_FORMAT_KEYS = 'dasherize'
 # Database
