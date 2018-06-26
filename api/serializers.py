@@ -14,6 +14,7 @@ class PersonSerializer(serializers.ModelSerializer):
      job = ResourceRelatedField(
            queryset=Job.objects
            )
+
      class Meta:
         model = Person
         fields = "__all__"
