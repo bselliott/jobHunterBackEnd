@@ -6,7 +6,7 @@ from rest_framework_json_api.relations import ResourceRelatedField
 class JobSerializer(serializers.ModelSerializer):
     class Meta:
         model = Job
-        fields = ('job_type', 'job_title', 'company_name', 'company_address',
+        fields = ('job_title', 'job_type', 'company_name', 'company_address',
                   'job_description')
 
 

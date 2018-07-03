@@ -184,6 +184,156 @@ class RecruiterAPITest(TestCase):
         self.assertEqual(404, afterDelete.status_code)
 
 
+class ViewFilterTest(TestCase):
+    def test_can_us_person_filter_on_job_view(self):
+        createPerson()
+        job_data_no_people = {
+                'data': {
+                    'attributes': {
+                        'job_title': 'mop man',
+                        'job_type': 'late',
+                        'company_name': 'mop co',
+                        'comapny_address': 'mop st',
+                        'job_description': 'mop till you drop'
+                        },
+                    'type': 'jobs',
+                    }
+                }
+        self.client.post('/api/jobs', json.dumps(job_data_no_people),
+                         'application/vnd/api+json')
+        respone_with_person = self.client.post('api//jobs', json.dumps(job_data_with_people),
+                                               'application/vnd.api+json')
+        response_with_person_id = json.loads(response_with_person.content)['data']['id']
+        person_data = {
+                'data': {
+                    'type': 'people',
+                    'id': '25',
+                    'attributes': {
+                        'first-name': 'Brain',
+                        'last-name': 'Elliott',
+                        'address': 'space',
+                        },
+                    'relationship': {
+                        'job': {
+                            'data': {
+                                'type': 'jobs',
+                                'id': response_with_person_id
+                                }
+                            }
+                        }
+                    },
+                }
+        self.client.post('/api/people', json.dumps(person_data), 'application/vnd.api+json')
+        response_with_filter = self.client.get('/api/jobs?person=')
+        response_without_fiter = self.client.get('/api/jobs')
+        self.assertEqual(len(json.loads(response_with_filter.content)['data']), 1)
+        self.assertEqual(len(json.loads(response_without_filter.content)['data']), 2)
+
+    def test_can_use_job_filter_on_person_view(self):
+        createPerson()
+        job_data_no_person = {
+                'data': {
+                    'attributes': {
+                        'job-title': 'hero',
+                        'job-type': 'nope',
+                        'company-name': 'hero co.',
+                        'comapny-address': 'long st.',
+                        'job-description': 'save lives',
+                        },
+                    'type': 'jobs',
+                    }
+                }
+        job_data_with_people = {
+                'data': {
+                    'attributes': {
+                        'job-type': 'none',
+                        'job-title': 'vilan',
+                        'company-name': 'vilas R us',
+                        'company-address': 'villan rd',
+                        'job-description': 'make peoples lives inconvinient'
+                        },
+                    'type': 'jobs',
+                    }
+                }
+        self.client.post('/api/jobs', json.dumps(job_data_no_people),
+                         'application/vnd.api+json')
+        response_with_person = self.client.post('/api/jobs', json.dumps(job_data_with_people),
+                                                'application/vnd.api+json')
+        response_with_person_id = json.loads(response_with_person.content)['data']['id']
+        person_data = {
+                'data': {
+                        'type': 'people',
+                        'id': 82,
+                        'attributes': {
+                            'first-name': 'Brian',
+                            'last-name': 'Elliott',
+                            'address': 'unknown',
+                            },
+                        'relationships': {
+                            'job': {
+                                'data': {
+                                    'type': 'jobs',
+                                    'id': response_with_person_id
+                                    }
+                                }
+                            }
+                },
+                }
+        self.client.post('/api/people', json.dumps(person_data), 'application/vnd.api+json')
+        response_with_filter = self.client.get('/api/people?job=')
+        response_without_filter = self.client.get('/api/people')
+        self.assertEqual(len(json.loads(response_with_filter.content)['data']), 1)
+        self.assertEqual(len(json.loads(response_without_filter.content)['data']), 2)
+
+
+def test_can_use_person_filter_recruiter_view(self):
+    person = createPerson()
+    recruiter_data_with_person = {
+            'data': {
+                'type': 'recruiters',
+                'attributes': {
+                    'first-name': 'Brain',
+                    'last-name': 'Elliott',
+                    'address': 'dont know'
+                    },
+                'relationships': {
+                    'person': {
+                        'data': {
+                            'type': 'people',
+                            'id': person.pk
+                            }
+                        }
+                    }
+                }
+            }
+
+    recruiter_data_without_person = {
+            'data': {
+                'type': 'recruiters',
+                'attributes': {
+                    'first-name': 'Brian',
+                    'last-name': 'elliott',
+                    'address': 'Dont know',
+                    },
+                'relationships': {
+                    'person': {
+                        'data': None
+                        }
+                    }
+                }
+            }
+    response1 = self.client.post('/api/recruiters', json.dumps(recruiter_data_with_person),
+                                 'application/vnd.ap+json')
+    response2 = self.client.post('/api/recruiters', json.dumps(recruiter_data_without_person),
+                                 'application/vnd.api+json')
+    self.assertEqual(response1.status_code, 201)
+    self.assertEqual(response2.status_code, 201)
+    response_with_filter = self.client.get('/api/recruiters?person=')
+    response_without_filter = self.client.get('/api/recruiters')
+    self.assertEqual(len(json.loads(response_with_filter.content)['data']), 1)
+    self.assertEqual(len(json.loads(response_without_filter.content)['data']), 2)
+
+
 def createPerson():
     return Person.objects.create(first_name='Ron', last_name='Swanson')
 
