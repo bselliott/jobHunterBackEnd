@@ -12,7 +12,9 @@ class JobSerializer(serializers.ModelSerializer):
 
 class PersonSerializer(serializers.ModelSerializer):
      job = ResourceRelatedField(
-           queryset=Job.objects
+           queryset=Job.objects,
+           allow_empty=True,
+           required=False
            )
 
      class Meta:
